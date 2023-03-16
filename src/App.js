@@ -1,55 +1,56 @@
-import "./App.css";
-import React, { useEffect, useState } from "react";
-import User from "./pages/user";
-import AddUser from "./pages/AddUser";
-
+import React, { useState, useEffect } from "react";
+import Post from "./Post/Post";
+import AddPost from "./Post/AddPost";
+import PostDetail from "./Post/PostDetail";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 function App() {
-  const [user, setUser] = useState([]);
-  const [add, setAdd] = useState(false);
-  const FormAppear = () => {
-    setAdd(!add);
+  const postDB = "post";
+  const [post, setPost] = useState([
+    {
+      name: "kaungsan",
+      description: "i am a software engineer",
+    },
+  ]);
+
+  const addPost = (posts) => {
+    setPost([posts, ...post]);
   };
-  const deleteUser = (userid) => {
-    let remove = user.filter((usr) => usr.uuid !== userid);
-    setUser(remove);
+
+  const deleteHandler = (id) => {
+    let filterPost = post.filter((post) => post.id !== id);
+    setPost(filterPost);
   };
-  const createUser = (users) => {
-    let addUser = [users, ...user];
-    setUser(addUser);
-    setAdd(!add);
-  };
+  useEffect(() => {
+    let post = localStorage.getItem(postDB);
+    const postObj = JSON.parse(post);
+    if (post) {
+      setPost(postObj);
+    }
+    console.log(post);
+  }, []);
 
   useEffect(() => {
-    fetch("https://randomuser.me/api/?results=10")
-      .then((res) => res.json())
-      .then((users) => {
-        let randomUser = users.results;
-        console.log(randomUser);
-        let filterUser = randomUser.map((usr) => {
-          return {
-            uuid: usr.login.uuid,
-            name: `${usr.name.title} ${usr.name.first} ${usr.name.last} `,
-            phone: usr.phone,
-            cell: usr.cell,
-            image: usr.picture.thumbnail,
-            email: usr.email,
-          };
-        });
-        console.log(filterUser);
-        setUser(filterUser);
-      })
-      .catch((error) => console.log(error));
-  }, []);
+    localStorage.setItem(postDB, JSON.stringify(post));
+  }, [post]);
+
   return (
     <div>
-      <h2 className="text-center my-4">Our Employee</h2>
-      <button className="btn btn-primary add mb-3" onClick={FormAppear}>
-        Add Employee
-      </button>
-      {add && <AddUser addUser={createUser} />}
-      {user.map((usr) => (
-        <User key={usr.uuid} data={usr} remove={deleteUser} />
-      ))}
+      <h2 className="text-white text-center mt-3 mb-2">Post</h2>
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            exist
+            element={<Post posts={post} removePost={deleteHandler} />}
+          />
+          <Route
+            exist
+            path="/add"
+            element={<AddPost addpost={addPost} />}
+          ></Route>
+          <Route path="/post/:id" element={<PostDetail />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
