@@ -22,10 +22,15 @@ class PostCard extends Component {
                 <i className="fa fa-eye"></i>
               </button>
             </Link>
+            <Link
+              to={`/post/edit/${this.props.post.id}`}
+              state={this.props.post}
+            >
+              <button className="btn btn-primary mx-2">
+                <i className="fa fa-edit"></i>
+              </button>
+            </Link>
 
-            <button className="btn btn-primary mx-2">
-              <i className="fa fa-edit"></i>
-            </button>
             <button
               className="btn btn-danger mx-2"
               onClick={this.delete.bind(this)}

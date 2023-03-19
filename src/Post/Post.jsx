@@ -8,7 +8,7 @@ class Post extends Component {
     this.props.removePost(id);
   }
   render() {
-    let state = this.props.post;
+    // let state = this.props.post;
     return (
       <div>
         <Link to="/add">
